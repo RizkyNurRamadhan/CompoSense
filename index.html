@@ -146,6 +146,7 @@
             -webkit-backdrop-filter: blur(16px) !important;
             border: 1.5px solid #a7f3d0 !important;
             box-shadow: 0 8px 24px -4px rgba(6, 78, 59, 0.22) !important;
+            overflow: visible !important;
         }
 
         .navbar-wrapper.scrolled .navbar:hover {
@@ -155,37 +156,37 @@
         }
 
         .navbar-wrapper.scrolled .navbar-left {
-            width: 48px !important;
-            height: 48px !important;
-            min-width: 48px !important;
-            min-height: 48px !important;
-            max-width: 48px !important;
-            max-height: 48px !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-width: unset !important;
+            min-height: unset !important;
+            max-width: unset !important;
+            max-height: unset !important;
             margin: 0 !important;
             padding: 0 !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             gap: 0 !important;
-            flex: 0 0 48px !important;
+            flex: 1 1 100% !important;
         }
 
         .navbar-wrapper.scrolled .hamburger-btn {
-            width: 48px !important;
-            height: 48px !important;
-            min-width: 48px !important;
-            min-height: 48px !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-width: unset !important;
+            min-height: unset !important;
             margin: 0 !important;
             padding: 0 !important;
             border: none !important;
             background: transparent !important;
             box-shadow: none !important;
-            border-radius: 14px !important;
+            border-radius: 12px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
-            gap: 4.5px !important;
+            gap: 4px !important;
             flex-shrink: 0 !important;
             position: relative !important;
             z-index: 2 !important;
@@ -1049,8 +1050,18 @@
             font-weight: 600;
             color: var(--primary-dark);
             background: var(--primary-light);
-            padding: 2px 8px;
+            padding: 2px 9px;
             border-radius: var(--radius-full);
+            transition: var(--transition-smooth);
+            font-size: 11.5px;
+            border: 1px solid transparent;
+        }
+
+        .meter-pill.inactive {
+            color: #9ca3af;
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            font-weight: 500;
         }
 
         /* ====================================================
@@ -1569,19 +1580,29 @@
             }
 
             .navbar-wrapper.scrolled .navbar-left {
-                width: 44px !important;
-                height: 44px !important;
-                flex: 0 0 44px !important;
+                width: 100% !important;
+                height: 100% !important;
+                flex: 1 1 100% !important;
             }
 
-            .navbar-wrapper.scrolled .navbar,
-            .navbar-wrapper.scrolled .hamburger-btn {
+            .navbar-wrapper.scrolled .navbar {
                 width: 44px !important;
                 height: 44px !important;
                 min-width: 44px !important;
                 min-height: 44px !important;
                 max-width: 44px !important;
                 max-height: 44px !important;
+                overflow: visible !important;
+            }
+
+            .navbar-wrapper.scrolled .hamburger-btn {
+                width: 100% !important;
+                height: 100% !important;
+                min-width: unset !important;
+                min-height: unset !important;
+                max-width: unset !important;
+                max-height: unset !important;
+                gap: 3.5px !important;
             }
 
             .navbar-wrapper.scrolled .hamburger-btn .line {
@@ -2022,8 +2043,8 @@
             </div>
 
             <div class="card-footer-meter">
-                <span>Kisaran Normal</span>
-                <span class="meter-pill">25°C - 35°C</span>
+                <span id="tempMeterLabel">Kisaran Normal</span>
+                <span class="meter-pill inactive" id="tempMeterPill">Belum Terpasang</span>
             </div>
         </div>
 
@@ -2050,8 +2071,8 @@
             </div>
 
             <div class="card-footer-meter">
-                <span>Kisaran Normal</span>
-                <span class="meter-pill">50% - 80%</span>
+                <span id="humidityMeterLabel">Kisaran Normal</span>
+                <span class="meter-pill inactive" id="humidityMeterPill">Belum Terpasang</span>
             </div>
         </div>
 
@@ -2079,8 +2100,8 @@
             </div>
 
             <div class="card-footer-meter">
-                <span>Target Optimal</span>
-                <span class="meter-pill">40% - 70%</span>
+                <span id="compostMeterLabel">Target Optimal</span>
+                <span class="meter-pill inactive" id="compostMeterPill">Belum Terpasang</span>
             </div>
         </div>
 
@@ -2197,12 +2218,12 @@
 
         <!-- Chart Container -->
         <div class="chart-wrapper" id="chartView">
-            <div class="chart-canvas-container" id="chartCanvasContainer">
+            <div class="chart-canvas-container" id="chartCanvasContainer" style="display: none;">
                 <canvas id="compostChart"></canvas>
             </div>
 
             <!-- Empty / Demo state -->
-            <div class="chart-empty-state" id="chartEmptyState" style="display: none;">
+            <div class="chart-empty-state" id="chartEmptyState" style="display: flex;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="12 6 12 12 16 14"/>
@@ -2412,6 +2433,10 @@
                     statusElement.style.background = "#fef2f2";
                     statusElement.style.color = "#b91c1c";
                     statusElement.style.borderColor = "#fecaca";
+                } else if (text.includes("parsial") || text.includes("lingkungan") || text.includes("menunggu")) {
+                    statusElement.style.background = "#eff6ff";
+                    statusElement.style.color = "#1d4ed8";
+                    statusElement.style.borderColor = "#bfdbfe";
                 } else {
                     statusElement.style.background = "#f3f4f6";
                     statusElement.style.color = "#4b5563";
@@ -2498,6 +2523,9 @@
                     } else if (lower.includes("basah")) {
                         topActionTagEl.className = "action-status-tag warning";
                         topActionTagEl.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Perlu Aerasi / Bahan Kering`;
+                    } else if (lower.includes("parsial") || lower.includes("menunggu")) {
+                        topActionTagEl.className = "action-status-tag info";
+                        topActionTagEl.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Menunggu Sensor Lengkap`;
                     } else if (lower.includes("target") || lower.includes("optimal") || lower.includes("termofilik") || lower.includes("lanjutkan")) {
                         topActionTagEl.className = "action-status-tag success";
                         topActionTagEl.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kondisi Optimal`;
@@ -2511,6 +2539,61 @@
             recObserver.observe(recommendationEl, { childList: true, characterData: true, subtree: true });
             syncTopAction();
         }
+
+        // ==========================================
+        // 8. DYNAMIC SENSOR PILL INDICATORS (PARTIAL DATA)
+        // ==========================================
+        function updateSensorCardPills() {
+            const tempVal = document.getElementById("temperature")?.textContent.trim();
+            const humVal = document.getElementById("airHumidity")?.textContent.trim();
+            const compVal = document.getElementById("compostMoisture")?.textContent.trim();
+
+            const tempPill = document.getElementById("tempMeterPill");
+            const humPill = document.getElementById("humidityMeterPill");
+            const compPill = document.getElementById("compostMeterPill");
+
+            const isMissing = (v) => !v || v === "--" || v === "null" || v === "undefined" || v === "NaN";
+
+            if (tempPill) {
+                if (isMissing(tempVal)) {
+                    tempPill.textContent = "Belum Terpasang";
+                    tempPill.classList.add("inactive");
+                } else {
+                    tempPill.textContent = "25°C - 35°C";
+                    tempPill.classList.remove("inactive");
+                }
+            }
+
+            if (humPill) {
+                if (isMissing(humVal)) {
+                    humPill.textContent = "Belum Terpasang";
+                    humPill.classList.add("inactive");
+                } else {
+                    humPill.textContent = "50% - 80%";
+                    humPill.classList.remove("inactive");
+                }
+            }
+
+            if (compPill) {
+                if (isMissing(compVal)) {
+                    compPill.textContent = "Belum Terpasang";
+                    compPill.classList.add("inactive");
+                } else {
+                    compPill.textContent = "40% - 70%";
+                    compPill.classList.remove("inactive");
+                }
+            }
+        }
+        window.updateSensorCardPills = updateSensorCardPills;
+
+        ["temperature", "airHumidity", "compostMoisture"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const obs = new MutationObserver(updateSensorCardPills);
+                obs.observe(el, { childList: true, characterData: true, subtree: true });
+            }
+        });
+        updateSensorCardPills();
     });
 
     // ==========================================
@@ -2551,6 +2634,14 @@
         return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     }
 
+    // Helper to safely parse sensor value (returns null for missing/NaN data)
+    function parseSensorValue(val) {
+        if (val === null || val === undefined || val === "" || Number.isNaN(Number(val))) {
+            return null;
+        }
+        return Number(val);
+    }
+
     window.updateHistoryChart = function(records) {
         const chartCanvas = document.getElementById("compostChart");
         const emptyState = document.getElementById("chartEmptyState");
@@ -2570,9 +2661,9 @@
         }
 
         const labels = records.map(r => formatChartTime(r.timestamp));
-        const compostData = records.map(r => Number(r.compostMoisture ?? 0));
-        const tempData = records.map(r => Number(r.airTemperature ?? 0));
-        const humidityData = records.map(r => Number(r.airHumidity ?? 0));
+        const compostData = records.map(r => parseSensorValue(r.compostMoisture));
+        const tempData = records.map(r => parseSensorValue(r.airTemperature));
+        const humidityData = records.map(r => parseSensorValue(r.airHumidity));
 
         const ctx = chartCanvas.getContext("2d");
 
@@ -2608,6 +2699,7 @@
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         pointHoverRadius: 6,
+                        spanGaps: true,
                         yAxisID: "y"
                     },
                     {
@@ -2622,6 +2714,7 @@
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         pointHoverRadius: 6,
+                        spanGaps: true,
                         yAxisID: "yTemp"
                     },
                     {
@@ -2637,6 +2730,7 @@
                         pointBorderWidth: 2,
                         pointRadius: 3,
                         pointHoverRadius: 5,
+                        spanGaps: true,
                         yAxisID: "y"
                     }
                 ]
@@ -2759,6 +2853,10 @@
         const topRec = document.getElementById("topActionRecommendation");
         if (topRec) topRec.textContent = "Kondisi kompos optimal pada fase termofilik (52.3°C, kelembapan 62%). Lanjutkan pemantauan rutin.";
         if (upEl) upEl.textContent = "Baru saja (Simulasi Demo)";
+
+        if (typeof window.updateSensorCardPills === "function") {
+            window.updateSensorCardPills();
+        }
     }
 
     const btnLoadDemo = document.getElementById("btnLoadDemo");
@@ -2766,8 +2864,8 @@
         btnLoadDemo.addEventListener("click", loadSimulationData);
     }
 
-    // Default: initialize chart with simulation data so the user can see it right away
-    loadSimulationData();
+    // Catatan: loadSimulationData() otomatis dinonaktifkan agar dashboard
+    // menunggu data asli dari Firebase/ESP32. Tombol simulasi tetap tersedia secara manual jika diperlukan.
 </script>
 
 <!-- FIREBASE APPLICATION LOGIC (CONNECTS TO ESP32) -->

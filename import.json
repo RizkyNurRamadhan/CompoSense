@@ -1,0 +1,31 @@
+{
+  "smart_compost": {
+    "latest": {
+      "airTemperature": 29.5,
+      "airHumidity": 75,
+      "compostMoisture": 60,
+      "status": "Dalam Rentang Target",
+      "recommendation": "Kelembapan berada dalam rentang target optimal.",
+      "timestamp": 1794556800
+    },
+    "settings": {
+      "minMoisture": 40,
+      "maxMoisture": 70
+    },
+    "history": {
+      "-O01_init": {
+        "airTemperature": 28.0,
+        "airHumidity": 78,
+        "compostMoisture": 58,
+        "timestamp": 1794553200
+      },
+      "-O02_init": {
+        "airTemperature": 29.5,
+        "airHumidity": 75,
+        "compostMoisture": 60,
+        "timestamp": 1794556800
+      }
+    }
+  }
+}
+
